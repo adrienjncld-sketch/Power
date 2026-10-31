@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Xiaomi Power Control</string>
+    <string name="widget_shutdown_description">Widget pour éteindre le téléphone</string>
+    <string name="widget_reboot_description">Widget pour redémarrer le téléphone</string>
+</resources>
