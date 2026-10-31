@@ -56,12 +56,13 @@ public class PowerConfirmActivity extends AppCompatActivity {
         }
         ((TextView)findViewById(R.id.confirmTitle)).setText(title);
         ((TextView)findViewById(R.id.confirmDescription)).setText(description);
+        final String selectedAction = action;
         MaterialButton confirm = findViewById(R.id.confirmButton);
         MaterialButton cancel = findViewById(R.id.cancelButton);
         confirm.setText(button);
         confirm.setOnClickListener(v -> {
             Intent service = new Intent(this, RootPowerService.class);
-            service.putExtra(EXTRA_ACTION, action);
+            service.putExtra(EXTRA_ACTION, selectedAction);
             androidx.core.content.ContextCompat.startForegroundService(this, service);
             finish();
         });
