@@ -13,41 +13,70 @@ import java.io.InputStreamReader;
 
 public class RootPowerService extends Service {
     private static final String CHANNEL = "power_control";
+
     @Override public void onCreate() {
         super.onCreate();
-        NotificationManager nm = getSystemService(NotificationManager.class);
-        if (Build.VERSION.SDK_INT >= 26) nm.createNotificationChannel(new NotificationChannel(CHANNEL, "Commandes d’alimentation", NotificationManager.IMPORTANCE_LOW));
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        if (Build.VERSION.SDK_INT >= 26) {
+            manager.createNotificationChannel(new NotificationChannel(
+                CHANNEL, "Commandes d’alimentation", NotificationManager.IMPORTANCE_LOW));
+        }
     }
+
     @Override public int onStartCommand(Intent intent, int flags, int startId) {
-        Notification n = new Notification.Builder(this, CHANNEL)
+        Notification notification = new Notification.Builder(this, CHANNEL)
             .setSmallIcon(R.drawable.ic_power)
             .setContentTitle("Xiaomi Power Control")
             .setContentText("Exécution de la commande système…")
-            .setOngoing(true).build();
-        startForeground(7, n);
+            .setOngoing(true)
+            .build();
+        startForeground(7, notification);
+
         String action = intent == null ? "" : intent.getStringExtra(PowerConfirmActivity.EXTRA_ACTION);
+        String command = commandFor(action);
+        if (command == null) {
+            stopForeground(STOP_FOREGROUND_REMOVE);
+            stopSelf(startId);
+            return START_NOT_STICKY;
+        }
+
+        final String rootCommand = command;
         new Thread(() -> {
-            String command = PowerConfirmActivity.ACTION_SHUTDOWN.equals(action) ? "reboot -p" : "reboot";
             try {
-                Process p = new ProcessBuilder("su", "-c", command).redirectErrorStream(true).start();
+                Process process = new ProcessBuilder("su", "-c", rootCommand)
+                    .redirectErrorStream(true).start();
                 StringBuilder output = new StringBuilder();
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
-                    String line; while ((line = reader.readLine()) != null) output.append(line).append('\n');
+                try (BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(process.getInputStream()))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) output.append(line).append('\n');
                 }
-                int code = p.waitFor();
-                if (code != 0) {
-                    android.os.Handler h = new android.os.Handler(getMainLooper());
-                    h.post(() -> Toast.makeText(this, "Commande root refusée. Vérifie l’autorisation Magisk.", Toast.LENGTH_LONG).show());
-                }
-            } catch (Exception e) {
-                android.os.Handler h = new android.os.Handler(getMainLooper());
-                h.post(() -> Toast.makeText(this, "Accès root indisponible : " + e.getMessage(), Toast.LENGTH_LONG).show());
+                int result = process.waitFor();
+                if (result != 0) showToast("Commande refusée. Vérifie l’autorisation root dans Magisk.");
+            } catch (Exception error) {
+                showToast("Accès root indisponible : " + error.getMessage());
             } finally {
                 stopForeground(STOP_FOREGROUND_REMOVE);
                 stopSelf(startId);
             }
-        }, "root-power-command").start();
+        }, "xiaomi-root-power").start();
         return START_NOT_STICKY;
     }
+
+    private String commandFor(String action) {
+        if (PowerConfirmActivity.ACTION_SHUTDOWN.equals(action)) return "reboot -p";
+        if (PowerConfirmActivity.ACTION_REBOOT.equals(action)) return "reboot";
+        if (PowerConfirmActivity.ACTION_RECOVERY.equals(action)) return "reboot recovery";
+        if (PowerConfirmActivity.ACTION_FASTBOOT.equals(action)) return "reboot bootloader";
+        if (PowerConfirmActivity.ACTION_SOFT_REBOOT.equals(action)) return "setprop ctl.restart zygote";
+        if (PowerConfirmActivity.ACTION_SYSTEM_UI.equals(action)) return "killall com.android.systemui";
+        return null;
+    }
+
+    private void showToast(String message) {
+        new android.os.Handler(getMainLooper()).post(
+            () -> Toast.makeText(this, message, Toast.LENGTH_LONG).show());
+    }
+
     @Override public IBinder onBind(Intent intent) { return null; }
 }
