@@ -1,0 +1,17 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/black">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="XIAOMI" android:textColor="@color/orange" android:textStyle="bold" android:textSize="18sp" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="POWER CONTROL" android:textColor="@android:color/white" android:textStyle="bold" android:textSize="30sp" android:layout_marginTop="8dp"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Contrôle de l’alimentation" android:textColor="@color/muted" android:textSize="14sp" android:layout_marginTop="4dp"/>
+        <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="28dp" app:cardBackgroundColor="@color/surface" app:cardCornerRadius="24dp" app:strokeColor="#33FF7900" app:strokeWidth="1dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ACTIONS RAPIDES" android:textColor="@color/orange" android:textStyle="bold" android:textSize="12sp"/>
+                <com.google.android.material.button.MaterialButton android:id="@+id/shutdownButton" android:layout_width="match_parent" android:layout_height="64dp" android:layout_marginTop="18dp" android:text="⏻   ÉTEINDRE" android:textStyle="bold" android:textSize="16sp" android:textColor="@color/black" app:backgroundTint="@color/orange" app:cornerRadius="18dp"/>
+                <com.google.android.material.button.MaterialButton android:id="@+id/rebootButton" android:layout_width="match_parent" android:layout_height="64dp" android:layout_marginTop="12dp" android:text="↻   REDÉMARRER" android:textStyle="bold" android:textSize="16sp" android:textColor="@color/orange" app:backgroundTint="@color/surface" app:strokeColor="@color/orange" app:strokeWidth="1dp" app:cornerRadius="18dp"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TES WIDGETS" android:textColor="@color/orange" android:textStyle="bold" android:textSize="12sp" android:layout_marginTop="30dp"/>
+        <TextView android:id="@+id/widgetHint" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/muted" android:textSize="14sp" android:lineSpacingExtra="5dp" android:layout_marginTop="10dp"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="XIAOMI 14T PRO  •  HYPEROS" android:textColor="@color/orange" android:textStyle="bold" android:textSize="11sp" android:layout_gravity="center_horizontal" android:layout_marginTop="34dp"/>
+    </LinearLayout>
+</ScrollView>
